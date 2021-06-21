@@ -1,0 +1,26 @@
+{
+  "name": "css",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "browserslist": "^4.16.6",
+    "gulp": "^4.0.2",
+    "gulp-postcss": "^9.0.0",
+    "postcss": "^8.3.3"
+  },
+  "browserslist": [
+    "IE 10",
+    "Chrome 43",
+    "ios_saf 10.0-10.2"
+  ],
+  "dependencies": {
+    "@types/node": "^15.12.4"
+  }
+}

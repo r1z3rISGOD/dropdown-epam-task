@@ -1,0 +1,9 @@
+# NPM specific
+node_modules/
+*.log
+.idea/
+.idea
+.DS_Store
+src/.DS_Store
+/index.css
+gulpfile.js
