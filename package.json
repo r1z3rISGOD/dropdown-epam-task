@@ -16,7 +16,7 @@
     "postcss": "^8.3.3"
   },
   "browserslist": [
-    "IE 10",
+    "IE 9",
     "Chrome 43",
     "ios_saf 10.0-10.2"
   ],
