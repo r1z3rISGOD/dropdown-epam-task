@@ -30,57 +30,75 @@ const listDown = document.querySelector('.dropdown__space-down'),
         }
     ];
 
-input.value = '';
-cord();
-const items = document.querySelector('.dropdown__space-list');
-vision(arr, items);
+
+const itemDown = document.querySelector('.dropdown__space-down');
+const itemUp = document.querySelector('.dropdown__space-up');
+visionElements(arr, itemDown);
+visionElements(arr, itemUp);
+const itemSize = document.querySelector('.dropdown__space-list__item');
+
 
 btn.addEventListener('click', () => {
+    const listDownHasClass = listDown.classList.contains('dropdown__space-active'),
+        listUpHasClass = listUp.classList.contains('dropdown__space-active');
+
     input.value = '';
-    if (listDown.classList.contains('dropdown__space-active') || listUp.classList.contains('dropdown__space-active')) {
+    if (listDownHasClass || listUpHasClass) {
         listDown.classList.remove('dropdown__space-active');
         listUp.classList.remove('dropdown__space-active');
-        btnName();
+        changeBtnSign();
     } else {
         input.focus();
-        cord().classList.add('dropdown__space-active');
+        visionElements(arr, sizingItem())
         const elems = document.querySelectorAll('.dropdown__space-list__item');
-        fill(elems);
-        btnName();
+        clickingItems(elems);
+        changeBtnSign();
     }
 });
 
 input.addEventListener('focus', () => {
     input.value = '';
-    cord().classList.add('dropdown__space-active');
+    sizingItem().classList.add('dropdown__space-active');
+    const active = document.querySelector('.dropdown__space-active');
+    active.style.maxHeight = `${itemSize * 5}`;
     const elems = document.querySelectorAll('.dropdown__space-list__item');
-    fill(elems);
-    btnName();
+    clickingItems(elems);
+    changeBtnSign();
 })
 
 input.addEventListener('input', (e) => {
-    const items = document.querySelector('.dropdown__space-list')
-    vision(filter(e.target.value, arr), items);
-    fill(document.querySelectorAll('.dropdown__space-list__item'));
+    const items = document.querySelector('.dropdown__space-active'),
+        dropdownItem = document.querySelectorAll('.dropdown__space-list__item');
+
+    visionElements(filterElements(e.target.value, arr), items);
+    clickingItems(dropdownItem);
 })
 
 window.addEventListener('click', (e) => {
-    if (!e.target.classList.contains('dropdown__space')
-        && !e.target.classList.contains('dropdown__input-button')
-        && !e.target.classList.contains('dropdown__input')
-        && !e.target.classList.contains('dropdown__space-list__item')) {
-        cord().classList.remove('dropdown__space-active');
-        btnName();
+    const dropSpace = e.target.classList.contains('dropdown__space'),
+        dropInputButton = e.target.classList.contains('dropdown__input-button'),
+        dropInput = e.target.classList.contains('dropdown__input'),
+        dropItems = e.target.classList.contains('dropdown__space-list__item');
+
+    if (!dropSpace
+        && !dropInputButton
+        && !dropInput
+        && !dropItems) {
+        sizingItem().classList.remove('dropdown__space-active');
+        changeBtnSign();
     }
 })
 
-window.addEventListener('scroll', elBlur);
+window.addEventListener('scroll', blurElements);
 
-window.addEventListener('resize', elBlur);
+window.addEventListener('resize', blurElements);
 
-function cord() {
-    const size = window.screen.height;
-    if (form.getBoundingClientRect().y + 300 > size) {
+function sizingItem() {
+    const size = window.innerHeight,
+        itemSize = document.querySelector('.dropdown__space-list__item'),
+        listSize = itemSize.offsetHeight,
+        inputSize = input.offsetHeight;
+    if (form.getBoundingClientRect().y + listSize * 5 + inputSize + listSize * 5 > size) {
         return dropDownUp('.dropdown__space-up', listDown, listUp);
     } else {
         return dropDownUp('.dropdown__space-down', listUp, listDown);
@@ -88,45 +106,62 @@ function cord() {
 }
 
 function dropDownUp(direction, first, second) {
-    first.innerHTML = '';
-    second.innerHTML = '<ul class="dropdown__space-list"></ul>'
-    const items = document.querySelector('.dropdown__space-list')
-    vision(arr, items);
+    first.classList.remove('dropdown__space-active');
+    second.classList.add('dropdown__space-active');
     const elems = document.querySelectorAll('.dropdown__space-list__item');
-    fill(elems);
+    clickingItems(elems);
     return document.querySelector(direction);
 }
 
-function vision(arr, items) {
+function visionElements(arr, items) {
     items.innerHTML = '';
     for (let obj of arr) {
         items.innerHTML += `<li id="${obj.id}" class="dropdown__space-list__item">${obj.label}</li>`;
     }
+    const elems = document.querySelectorAll('.dropdown__space-list__item');
+    clickingItems(elems);
 }
 
-function fill(items) {
+function clickingItems(items) {
     for (let item of items) {
         item.addEventListener('click', (e) => {
             input.value = `${e.target.textContent}`;
-            cord().classList.remove('dropdown__space-active');
-            btnName();
+            sizingItem().classList.remove('dropdown__space-active');
+            changeBtnSign();
+        })
+
+        item.addEventListener('mouseenter', (e) => {
+            e.target.style.backgroundColor = '#4ea8f5';
+            e.target.style.color = "white"
+        })
+
+        item.addEventListener('mouseleave', (e) => {
+            e.target.style.backgroundColor = '';
+            e.target.style.color = "black"
         })
     }
 }
 
-function btnName() {
-    if (cord().classList.contains('dropdown__space-active')) {
+function changeBtnSign() {
+    const listDownHasClass = listDown.classList.contains('dropdown__space-active'),
+        listUpHasClass = listUp.classList.contains('dropdown__space-active'),
+        size = window.innerHeight,
+        itemSize = document.querySelector('.dropdown__space-list__item'),
+        listSize = itemSize.offsetHeight,
+        inputSize = input.offsetHeight;
+
+    if (listDownHasClass || !listUpHasClass && form.getBoundingClientRect().y + listSize * 5 + inputSize + listSize * 5 > size) {
         btn.textContent = '▲';
-    } else {
+    } else if (!listDownHasClass || listUpHasClass && !(form.getBoundingClientRect().y + listSize * 5 + inputSize + listSize * 5 > size)) {
         btn.textContent = '▼';
     }
 }
 
-function filter(val, list) {
+function filterElements(val, list) {
     return list.filter(i => i.label.toLowerCase().includes(val.toLowerCase()))
 }
 
-function remText(text, arr) {
+function removeText(text, arr) {
     for (let val of arr) {
         if (val.label === text) {
             return true;
@@ -134,12 +169,12 @@ function remText(text, arr) {
     }
 }
 
-function elBlur() {
+function blurElements() {
     input.blur();
     btn.blur();
-    if (!remText(input.value, arr)) {
+    if (!removeText(input.value, arr)) {
         input.value = ''
     }
-    cord().classList.remove('dropdown__space-active');
-    btnName();
+    sizingItem().classList.remove('dropdown__space-active');
+    changeBtnSign();
 }
